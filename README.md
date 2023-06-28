@@ -5,6 +5,10 @@
 
 redis 代理数据格式为 zset 
 
+服务每次从 redis 取一个代理，访问最终目标地址
+
+如果不需要使用代理池访问最终目标，请把 .env 的 USE_PROXY_POOL 参数设置为不是 1 的其它值
+
 ## 使用方法
 
 复制 example.env 为 .env ，并修改 .env 参数

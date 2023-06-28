@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"math/rand"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,7 +31,9 @@ type Proxy struct {
 func main() {
 
 	godotenv.Load()
-	RedisClient()
+	if os.Getenv("USE_PROXY_POOL") == "1" {
+		RedisClient()
+	}
 
 	addr := flag.String("addr", os.Getenv("SERVER_BIND"), "监听地址， 默认 0.0.0.0")
 	port := flag.String("port", os.Getenv("SERVER_PORT"), "监听端口， 默认 18009")
@@ -156,18 +159,26 @@ func (p *Proxy) HTTPs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	z, err := GetRedisProxy()
-	if err != nil {
-		p.Printf("hijack err %v", err)
-		return
-	}
-	fmt.Println("proxy: ", z)
-	proxyURL, _ := url.Parse("http://" + z)
-	auth := dialerProxy.AuthBasic(os.Getenv("PROXY_USER"), os.Getenv("PROXY_PAUSER"))
-	tunnel := dialerProxy.New(proxyURL, dialerProxy.WithTls(nil), dialerProxy.WithConnectionTimeout(5*time.Second), dialerProxy.WithProxyAuth(auth))
+	var server net.Conn
 
-	//使用代理建立和服务器的tcp连接
-	server, err := tunnel.Dial("tcp", addr)
+	//使用代理池的代理访问目标
+	if os.Getenv("USE_PROXY_POOL") == "1" {
+		z, err := GetRedisProxy()
+		if err != nil {
+			p.Printf("hijack err %v", err)
+			return
+		}
+		fmt.Println("proxy: ", z)
+		proxyURL, _ := url.Parse("http://" + z)
+		auth := dialerProxy.AuthBasic(os.Getenv("PROXY_USER"), os.Getenv("PROXY_PAUSER"))
+		tunnel := dialerProxy.New(proxyURL, dialerProxy.WithTls(nil), dialerProxy.WithConnectionTimeout(5*time.Second), dialerProxy.WithProxyAuth(auth))
+		server, err = tunnel.Dial("tcp", addr)
+	} else {
+		server, err = net.Dial("tcp", addr)
+	}
+
+	////使用代理建立和服务器的tcp连接
+	//server, err := tunnel.Dial("tcp", addr)
 
 	// 建立和服务器的 tcp 连接
 	//server, err := net.Dial("tcp", addr)
