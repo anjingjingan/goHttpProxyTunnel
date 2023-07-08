@@ -1,5 +1,9 @@
+# HTTP CONNECT tunneling Proxy
+
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 ## A simple http proxy service that supports authentication
-## Support using other proxies to access the final target in the service
+## Support for using other proxies to access the final destination
 ## This project relies on https://github.com/mwitkow/go-http-dialer
 
 You need to write the proxy list into redis in advance, and maintain the proxy life cycle by yourself
@@ -24,9 +28,12 @@ cd httpProxyTunnel
 go build .
 ````
 
+# HTTP CONNECT 隧道代理
+
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ## 一个简单的 http 代理服务，支持验证
-## 支持在服务里面，使用其它代理访问最终目标
+## 支持使用其它代理访问最终目标
 ## 本项目依赖了 https://github.com/mwitkow/go-http-dialer
 
 需要事先把代理列表写入 redis ，并自行维护代理生命周期 
