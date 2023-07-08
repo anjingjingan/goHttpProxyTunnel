@@ -1,5 +1,6 @@
 ## A simple http proxy service that supports authentication
 ## Support using other proxies to access the final target in the service
+## This project relies on https://github.com/mwitkow/go-http-dialer
 
 You need to write the proxy list into redis in advance, and maintain the proxy life cycle by yourself
 
@@ -26,6 +27,7 @@ go build .
 
 ## 一个简单的 http 代理服务，支持验证
 ## 支持在服务里面，使用其它代理访问最终目标
+## 本项目依赖了 https://github.com/mwitkow/go-http-dialer
 
 需要事先把代理列表写入 redis ，并自行维护代理生命周期 
 
