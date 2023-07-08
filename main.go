@@ -30,7 +30,10 @@ type Proxy struct {
 
 func main() {
 
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		panic(".env 配置文件不存在")
+	}
 	if os.Getenv("USE_PROXY_POOL") == "1" {
 		RedisClient()
 	}
