@@ -164,9 +164,10 @@ func (p *Proxy) HTTPs(w http.ResponseWriter, r *http.Request) {
 
 	var server net.Conn
 
+	var z string
 	//使用代理池的代理访问目标
 	if os.Getenv("USE_PROXY_POOL") == "1" {
-		z, err := GetRedisProxy()
+		z, err = GetRedisProxy()
 		if err != nil {
 			p.Printf("hijack err %v", err)
 			return
@@ -192,6 +193,16 @@ func (p *Proxy) HTTPs(w http.ResponseWriter, r *http.Request) {
 
 	// 告诉客户端连接已经成功建立
 	_, _ = client.Write([]byte("HTTP/1.0 200 Connection Established\r\n\r\n"))
+
+	if server == nil {
+		fmt.Println("server is nil：", z)
+		return
+	}
+
+	if client == nil {
+		fmt.Println("client is nil：", z)
+		return
+	}
 
 	// 双向数据转发
 	go func(dst io.Writer, src io.Reader) {
